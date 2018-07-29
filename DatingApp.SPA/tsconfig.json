@@ -1,5 +1,10 @@
 {
   "compileOnSave": false,
+  "exclude": [
+    "node_modules",
+    "../../node_modules",
+    "**/node_modules/*"
+  ],
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
