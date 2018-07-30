@@ -5,7 +5,7 @@ import { Headers, Http, RequestOptions, Response } from '@angular/http';
 
 @Injectable()
 export class AuthService {
-  baseUrl = 'http://localhost:5000/api/auth';
+  baseUrl = 'http://localhost:5000/api/auth/';
   userToken: any;
 
   constructor(private http: Http) {}
