@@ -1,9 +1,10 @@
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
 
 import { Injectable } from '@angular/core';
 import { Headers, Http, RequestOptions, Response } from '@angular/http';
+import { tokenNotExpired } from 'angular2-jwt';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
@@ -30,6 +31,10 @@ export class AuthService {
     return this.http
       .post(this.baseUrl + 'register', model, this.requestOptions())
       .catch(this.handleError);
+  }
+
+  loggedIn() {
+    return tokenNotExpired('token');
   }
 
   private requestOptions() {
