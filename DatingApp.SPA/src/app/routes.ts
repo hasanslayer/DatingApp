@@ -7,8 +7,16 @@ import { AuthGuard } from './_guard/auth.guard';
 
 export const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: 'members', component: MemberListComponent, canActivate: [AuthGuard] },
-  { path: 'messages', component: MessagesComponent },
-  { path: 'lists', component: ListsComponent },
+  {
+    path: '', // we use a dummy route to make the protection at higher level and protect his children routes
+    runGuardsAndResolvers: 'always',
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'members', component: MemberListComponent },
+      { path: 'messages', component: MessagesComponent },
+      { path: 'lists', component: ListsComponent }
+    ]
+  },
+
   { path: '**', redirectTo: 'home', pathMatch: 'full' }
 ];
