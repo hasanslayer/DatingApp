@@ -1,6 +1,5 @@
-.dropdown-menu li {
-  cursor: pointer;
-}
-.navbar-brand{
+.dropdown-menu li,
+.dropdown-toggle,
+.navbar-brand {
   cursor: pointer;
 }
