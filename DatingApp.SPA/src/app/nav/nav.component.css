@@ -1,3 +1,6 @@
 .dropdown-menu li {
   cursor: pointer;
 }
+.navbar-brand{
+  cursor: pointer;
+}
