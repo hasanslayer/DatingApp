@@ -3,6 +3,11 @@ import { User } from '../../_models/User';
 import { UserService } from '../../_services/user.service';
 import { AlertifyService } from '../../_services/alertify.service';
 import { ActivatedRoute } from '@angular/router';
+import {
+  NgxGalleryOptions,
+  NgxGalleryImage,
+  NgxGalleryAnimation
+} from 'ngx-gallery';
 
 @Component({
   selector: 'app-member-detail',
@@ -10,6 +15,8 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./member-detail.component.css']
 })
 export class MemberDetailComponent implements OnInit {
+  galleryOptions: NgxGalleryOptions[];
+  galleryImages: NgxGalleryImage[];
   user: User;
 
   constructor(
@@ -19,20 +26,33 @@ export class MemberDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadUser();
+    this.route.data.subscribe(data => {
+      this.user = data['user']; // by using resolver we get the user data from the route
+    });
+
+    this.galleryOptions = [
+      {
+        width: '500px',
+        height: '500px',
+        imagePercent: 100,
+        thumbnailsColumns: 4,
+        imageAnimation: NgxGalleryAnimation.Slide,
+        preview: false
+      }
+    ];
+    this.galleryImages = this.getImages();
   }
 
-  // members/3
-  loadUser() {
-    this.userService
-      .getUser(+this.route.snapshot.params['id']) // + mean cast to number
-      .subscribe(
-        (user: User) => {
-          this.user = user;
-        },
-        error => {
-          this.alertify.error(error);
-        }
-      );
+  getImages() {
+    const imageUrls = [];
+    for (let i = 0; i < this.user.photos.length; i++) {
+      imageUrls.push({
+        small: this.user.photos[i].url,
+        medium: this.user.photos[i].url,
+        big: this.user.photos[i].url,
+        description: this.user.photos[i].description
+      });
+    }
+    return imageUrls;
   }
 }
