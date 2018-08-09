@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { BsDropdownModule } from 'ngx-bootstrap';
+import { BsDropdownModule, TabsModule } from 'ngx-bootstrap';
 
 import { AuthGuard } from './_guard/auth.guard';
 import { AlertifyService } from './_services/alertify.service';
@@ -39,7 +39,8 @@ import { appRoutes } from './routes';
     FormsModule,
     BsDropdownModule.forRoot(),
     RouterModule.forRoot(appRoutes),
-    AuthModule
+    AuthModule,
+    TabsModule.forRoot()
   ],
   providers: [AuthService, AlertifyService, AuthGuard, UserService],
   bootstrap: [AppComponent]
