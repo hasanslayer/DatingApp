@@ -10,6 +10,7 @@ import { AlertifyService } from './_services/alertify.service';
 import { AuthService } from './_services/auth.service';
 import { UserService } from './_services/user.service';
 import { AppComponent } from './app.component';
+import { AuthModule } from './auth/auth.module';
 import { HomeComponent } from './home/home.component';
 import { ListsComponent } from './lists/lists.component';
 import { MemberCardComponent } from './members/member-card/member-card.component';
@@ -35,7 +36,8 @@ import { appRoutes } from './routes';
     HttpModule,
     FormsModule,
     BsDropdownModule.forRoot(),
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    AuthModule
   ],
   providers: [AuthService, AlertifyService, AuthGuard, UserService],
   bootstrap: [AppComponent]

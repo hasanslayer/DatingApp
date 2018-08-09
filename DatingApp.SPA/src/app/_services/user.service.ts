@@ -3,7 +3,8 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
 import { Injectable } from '@angular/core';
-import { Headers, Http, RequestOptions } from '@angular/http';
+import { Headers, RequestOptions } from '@angular/http';
+import { AuthHttp } from 'angular2-jwt';
 import { Observable } from 'rxjs/Observable';
 
 import { environment } from '../../environments/environment';
@@ -13,22 +14,13 @@ import { User } from '../_models/User';
 export class UserService {
   baseUrl = environment.apiUrl;
 
-  constructor(private http: Http) {}
+  constructor(private authHttp: AuthHttp) {}
 
   getUsers(): Observable<User[]> {
-    return this.http
-      .get(this.baseUrl + 'users', this.jwt())
+    return this.authHttp
+      .get(this.baseUrl + 'users')
       .map(response => <User[]>response.json()) // User[] let the return type is observable of user array
       .catch(this.handleError);
-  }
-
-  private jwt() {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const headers = new Headers({ 'Authorization': 'Bearer ' + token });
-      headers.append('Content-type', 'application/json');
-      return new RequestOptions({ headers: headers });
-    }
   }
 
   private handleError(error: any) {
@@ -37,7 +29,6 @@ export class UserService {
       return Observable.throw(applicationError);
     }
     const serverError = error.json();
-
     let modelStateError = '';
     if (serverError) {
       for (const key in serverError) {
