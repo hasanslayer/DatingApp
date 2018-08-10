@@ -25,6 +25,7 @@ import { RegisterComponent } from './register/register.component';
 import { appRoutes } from './routes';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
+import { PreventUnsavedChanges } from './_guard/prevent-unsaved-changes.guard';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { MemberEditResolver } from './_resolvers/member-edit.resolver';
     UserService,
     MemberDetailResolver,
     MemberListResolver,
-    MemberEditResolver
+    MemberEditResolver,
+    PreventUnsavedChanges
   ],
   bootstrap: [AppComponent]
 })
