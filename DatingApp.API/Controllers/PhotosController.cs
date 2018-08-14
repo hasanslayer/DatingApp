@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using CloudinaryDotNet;
 using DatingApp.API.Data;
 using DatingApp.API.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +10,7 @@ using System.Security.Claims;
 using CloudinaryDotNet.Actions;
 using DatingApp.API.Models;
 using System.Linq;
+using CloudinaryDotNet;
 
 namespace DatingApp.API.Controllers
 {
@@ -77,7 +77,7 @@ namespace DatingApp.API.Controllers
                         File = new FileDescription(file.Name, stream)
                     };
 
-                    uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                    uploadResult = _cloudinary.Upload(uploadParams);
                 }
             }
 
