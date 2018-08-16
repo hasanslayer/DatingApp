@@ -7,6 +7,7 @@ import { Headers, Http, RequestOptions, Response } from '@angular/http';
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { Observable } from 'rxjs/Observable';
 import { User } from '../_models/User';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class AuthService {
@@ -15,8 +16,14 @@ export class AuthService {
   decodedToken: any;
   currentUser: User;
   jwtHelper: JwtHelper = new JwtHelper();
+  private photoUrl = new BehaviorSubject<string>('../../assets/user.png'); // we should put an initial value when we use Behavior Subject
+  currentPhotoUrl = this.photoUrl.asObservable();
 
   constructor(private http: Http) {}
+
+  changeMemberPhoto(photoUrl: string) {
+    this.photoUrl.next(photoUrl);
+  }
 
   login(model: any) {
     return this.http
@@ -29,6 +36,7 @@ export class AuthService {
           this.decodedToken = this.jwtHelper.decodeToken(user.tokenString);
           this.currentUser = user.user;
           this.userToken = user.tokenString;
+          this.changeMemberPhoto(this.currentUser.photoUrl);
         }
       })
       .catch(this.handleError);
