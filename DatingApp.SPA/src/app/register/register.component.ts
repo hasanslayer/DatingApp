@@ -1,7 +1,12 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
 import { AlertifyService } from '../_services/alertify.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  FormBuilder
+} from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -16,27 +21,37 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private alertify: AlertifyService
+    private alertify: AlertifyService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit() {
-    this.registerForm = new FormGroup(
+    this.createRegisterForm();
+  }
+
+  createRegisterForm() {
+    this.registerForm = this.fb.group(
       {
-        username: new FormControl('', Validators.required),
-        password: new FormControl('', [
-          Validators.required,
-          Validators.minLength(4),
-          Validators.maxLength(8)
-        ]),
-        confirmPassword: new FormControl('', Validators.required)
+        username: ['', Validators.required],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(4),
+            Validators.maxLength(8)
+          ]
+        ],
+        confirmPassword: ['', Validators.required]
       },
-      this.passwordMatchValidator
+      { validator: this.passwordMatchValidator }
     );
   }
 
   passwordMatchValidator(g: FormGroup) {
     // we can access to child of the FormGroup : FromControl[username,password,...]
-    return g.get('password').value === g.get('confirmPassword').value ? null : { 'mismatch': true };
+    return g.get('password').value === g.get('confirmPassword').value
+      ? null
+      : { mismatch: true };
   }
 
   register() {
