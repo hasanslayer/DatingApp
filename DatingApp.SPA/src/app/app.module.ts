@@ -4,7 +4,7 @@ import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { FileUploadModule } from 'ng2-file-upload';
-import { BsDatepickerModule, BsDropdownModule, TabsModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, BsDropdownModule, PaginationModule, TabsModule } from 'ngx-bootstrap';
 import { NgxGalleryModule } from 'ngx-gallery';
 import { TimeAgoPipe } from 'time-ago-pipe';
 
@@ -56,7 +56,8 @@ import { appRoutes } from './routes';
     TabsModule.forRoot(),
     NgxGalleryModule,
     FileUploadModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    PaginationModule.forRoot()
   ],
   providers: [
     AuthService,
