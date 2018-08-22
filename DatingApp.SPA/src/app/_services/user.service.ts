@@ -34,7 +34,9 @@ export class UserService {
         '&maxAge=' +
         userParams.maxAge +
         '&gender=' +
-        userParams.gender;
+        userParams.gender +
+        '&orderBy=' +
+        userParams.orederBy;
     }
 
     return this.authHttp
