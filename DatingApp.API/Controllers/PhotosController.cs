@@ -54,7 +54,7 @@ namespace DatingApp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPhotoForUser(int userId, PhotoForCreationDto photoDto)
         {
-            var user = await _repo.GerUser(userId);
+            var user = await _repo.GetUser(userId);
 
             if (user == null)
                 return BadRequest("Could not find user");
