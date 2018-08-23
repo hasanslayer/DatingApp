@@ -58,14 +58,14 @@ namespace DatingApp.API.Data
 
             if (userParams.Likers)
             {
-                var userLikees = await GetUserLikes(userParams.UserId,userParams.Likers);
-                users = users.Where(u => userLikees.Any(likee => likee.LikeeId == u.Id));
+                var userLikers = await GetUserLikes(userParams.UserId, userParams.Likers);
+                users = users.Where(u => userLikers.Any(liker => liker.LikerId == u.Id));
             }
 
             if (userParams.Likees)
             {
-                var userLikers = await GetUserLikes(userParams.UserId,userParams.Likers);
-                users = users.Where(u => userLikers.Any(liker => liker.LikerId == u.Id));
+                var userLikees = await GetUserLikes(userParams.UserId, userParams.Likers); // we use userParams.Likers because it will be false
+                users = users.Where(u => userLikees.Any(likee => likee.LikeeId == u.Id));
             }
 
             if (userParams.MinAge != 18 || userParams.MaxAge != 99)
