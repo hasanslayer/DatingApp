@@ -16,7 +16,7 @@ namespace DatingApp.API.Data
         Task<Photo> GetMainPhotoForUser(int userId);
         Task<Like> GetLike(int userId, int recipientId);
         Task<Message> GetMessage(int Id);
-        Task<PagedList<Message>> GetMessagesForUser(); // for inbox, outbox and unReadMessages
+        Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams); // for inbox, outbox and unReadMessages
         Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId); // to display the messages between two specific users
     }
 }
