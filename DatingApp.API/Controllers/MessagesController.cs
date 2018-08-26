@@ -40,6 +40,24 @@ namespace DatingApp.API.Controllers
             return Ok(messageFromRepo);
         }
 
+        /*we need both id of sender and reciver but this cause a problem asp.net core
+         because we have two methods that take id as a parameters [the both is integer]
+        the solving this problem by using 'thread'*/
+
+        [HttpGet("thread/{id}")]
+
+        public async Task<IActionResult> GetMessageThread(int userId, int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var messagesFromRepo = await _repo.GetMessageThread(userId, id);
+
+            var messageThread = _mapper.Map<IEnumerable<MessageToReturnDto>>(messagesFromRepo);
+
+            return Ok(messageThread);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetMessagesForUser(int userId, MessageParams messageParams)
         {
