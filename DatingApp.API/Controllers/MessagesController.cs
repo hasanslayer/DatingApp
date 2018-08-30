@@ -99,7 +99,7 @@ namespace DatingApp.API.Controllers
             throw new Exception("Creating the message fail on save");
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("{id}")] // we want the sender and the reciver marked for the deletion
 
         public async Task<IActionResult> DeleteMessage(int id, int userId)
         {
@@ -121,6 +121,26 @@ namespace DatingApp.API.Controllers
                 return NoContent();
 
             throw new Exception("Error deleting the message");
+        }
+
+        [HttpPost("{id}/read")]
+        public async Task<IActionResult> MarkMessageAsRead(int userId, int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var message = await _repo.GetMessage(id);
+
+            if (message.RecipientId != userId)
+                return BadRequest("Failed to mark messsage as read");
+
+            message.IsRead = true;
+            message.DateRead = DateTime.Now;
+
+            await _repo.SaveAll();
+
+            return NoContent();
+
         }
 
     }

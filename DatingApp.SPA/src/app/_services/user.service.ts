@@ -155,6 +155,15 @@ export class UserService {
       .catch(this.handleError);
   }
 
+  markAsRead(userId: number, messageId: number) {
+    return this.authHttp
+      .post(
+        this.baseUrl + 'users/' + userId + '/messages/' + messageId + '/read',
+        {}
+      )
+      .subscribe(); // self subscribing [we don't need to creat a separate method in it in the compoent]
+  }
+
   private handleError(error: any) {
     if (error.status === 400) {
       return Observable.throw(error._body);
