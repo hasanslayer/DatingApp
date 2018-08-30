@@ -148,6 +148,13 @@ export class UserService {
       .catch(this.handleError);
   }
 
+  deleteMessage(id: number, userId: number) {
+    return this.authHttp
+      .post(this.baseUrl + 'users/' + userId + '/messages/' + id, {})
+      .map(response => {}) // we don't return a content so we don't map anything
+      .catch(this.handleError);
+  }
+
   private handleError(error: any) {
     if (error.status === 400) {
       return Observable.throw(error._body);
