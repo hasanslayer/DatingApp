@@ -82,6 +82,7 @@ namespace DatingApp.API.Controllers
             messageForCreationDto.SenderId = userId; // the sender id should be the same of the user id
 
             var recipient = await _repo.GetUser(messageForCreationDto.RecipientId);
+            var sender = await _repo.GetUser(messageForCreationDto.SenderId);
 
             if (recipient == null)
                 return BadRequest("Could not find user");
@@ -90,7 +91,7 @@ namespace DatingApp.API.Controllers
 
             _repo.Add(message);
 
-            var messageToReturn = _mapper.Map<MessageForCreationDto>(message);
+            var messageToReturn = _mapper.Map<MessageToReturnDto>(message);
 
             if (await _repo.SaveAll())
                 return CreatedAtRoute("GetMessage", new { id = message.Id }, messageToReturn);
