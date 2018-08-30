@@ -15,6 +15,7 @@ export class MemberMessagesComponent implements OnInit {
   @Input()
   userId: number; // we will get the userId[recipientId] from the parent component
   messages: Message[];
+  newMessage: any = {};
 
   constructor(
     private authService: AuthService,
@@ -31,6 +32,21 @@ export class MemberMessagesComponent implements OnInit {
       .getMessageThread(this.authService.decodedToken.nameid, this.userId)
       .subscribe(
         messages => (this.messages = messages),
+        error => {
+          this.alertify.error(error);
+        }
+      );
+  }
+
+  sendMessage() {
+    this.newMessage.recipientId = this.userId;
+    this.userService
+      .sendMessage(this.authService.decodedToken.nameid, this.newMessage)
+      .subscribe(
+        message => {
+          this.messages.unshift(message); // we want to show the last message on the first
+          this.newMessage.content = ''; // reset the form
+        },
         error => {
           this.alertify.error(error);
         }
