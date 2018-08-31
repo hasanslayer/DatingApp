@@ -25,7 +25,6 @@ import { AlertifyService } from './_services/alertify.service';
 import { AuthService } from './_services/auth.service';
 import { UserService } from './_services/user.service';
 import { AppComponent } from './app.component';
-import { AuthModule } from './auth/auth.module';
 import { HomeComponent } from './home/home.component';
 import { ListsComponent } from './lists/lists.component';
 import { MemberCardComponent } from './members/member-card/member-card.component';
@@ -64,7 +63,6 @@ import { HttpClientModule } from '@angular/common/http';
     ReactiveFormsModule,
     BsDropdownModule.forRoot(),
     RouterModule.forRoot(appRoutes),
-    AuthModule,
     TabsModule.forRoot(),
     NgxGalleryModule,
     FileUploadModule,
