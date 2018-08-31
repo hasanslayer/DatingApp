@@ -3,11 +3,12 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
 import { Injectable } from '@angular/core';
-import { Headers, Http, RequestOptions, Response } from '@angular/http';
-import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { Observable } from 'rxjs/Observable';
 import { User } from '../_models/User';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthUser } from '../_models/authUser';
 
 @Injectable()
 export class AuthService {
@@ -15,11 +16,13 @@ export class AuthService {
   userToken: any;
   decodedToken: any;
   currentUser: User;
-  jwtHelper: JwtHelper = new JwtHelper();
   private photoUrl = new BehaviorSubject<string>('../../assets/user.png'); // we should put an initial value when we use Behavior Subject
   currentPhotoUrl = this.photoUrl.asObservable();
 
-  constructor(private http: Http) {}
+  constructor(
+    private http: HttpClient,
+    private jwtHelperService: JwtHelperService
+  ) {}
 
   changeMemberPhoto(photoUrl: string) {
     this.photoUrl.next(photoUrl);
@@ -27,13 +30,16 @@ export class AuthService {
 
   login(model: any) {
     return this.http
-      .post(this.baseUrl + 'login', model, this.requestOptions())
-      .map((res: Response) => {
-        const user = res.json();
+      .post<AuthUser>(this.baseUrl + 'login', model, {
+        headers: new HttpHeaders().set('Content-Type', 'application/json')
+      })
+      .map(user => {
         if (user && user.tokenString) {
           localStorage.setItem('token', user.tokenString);
           localStorage.setItem('user', JSON.stringify(user.user));
-          this.decodedToken = this.jwtHelper.decodeToken(user.tokenString);
+          this.decodedToken = this.jwtHelperService.decodeToken(
+            user.tokenString
+          );
           this.currentUser = user.user;
           this.userToken = user.tokenString;
           if (this.currentUser.photoUrl != null) {
@@ -48,18 +54,20 @@ export class AuthService {
 
   register(user: User) {
     return this.http
-      .post(this.baseUrl + 'register', user, this.requestOptions())
+      .post(this.baseUrl + 'register', user, {
+        headers: new HttpHeaders().set('Content-Type', 'application/json')
+      })
       .catch(this.handleError);
   }
 
   loggedIn() {
-    return tokenNotExpired('token');
-  }
+    const token = this.jwtHelperService.tokenGetter();
 
-  private requestOptions() {
-    const headers = new Headers({ 'Content-type': 'application/json' });
+    if (!token) {
+      return false;
+    }
 
-    return new RequestOptions({ headers: headers });
+    return !this.jwtHelperService.isTokenExpired(token);
   }
 
   private handleError(error: any) {
