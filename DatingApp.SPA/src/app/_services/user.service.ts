@@ -55,38 +55,35 @@ export class UserService {
         }
 
         return paginatedResult; // by this way we will get the users and the pagination with pagination header
-      })
-      .catch(this.handleError);
+      });
   }
 
   getUser(id): Observable<User> {
-    return this.authHttp
-      .get(this.baseUrl + 'users/' + id)
-      .catch(this.handleError);
+    return this.authHttp.get<User>(this.baseUrl + 'users/' + id);
   }
 
   updateUser(id: number, user: User) {
-    return this.authHttp
-      .put(this.baseUrl + 'users/' + id, user)
-      .catch(this.handleError);
+    return this.authHttp.put(this.baseUrl + 'users/' + id, user);
   }
 
   setMainPhoto(userId: number, id: number) {
-    return this.authHttp
-      .post(this.baseUrl + 'users/' + userId + '/photos/' + id + '/setMain', {})
-      .catch(this.handleError);
+    return this.authHttp.post(
+      this.baseUrl + 'users/' + userId + '/photos/' + id + '/setMain',
+      {}
+    );
   }
 
   deletePhoto(userId: number, id: number) {
-    return this.authHttp
-      .delete(this.baseUrl + 'users/' + userId + '/photos/' + id)
-      .catch(this.handleError);
+    return this.authHttp.delete(
+      this.baseUrl + 'users/' + userId + '/photos/' + id
+    );
   }
 
   sendLike(id: number, recipientId: number) {
-    return this.authHttp
-      .post(this.baseUrl + 'users/' + id + '/like/' + recipientId, {})
-      .catch(this.handleError);
+    return this.authHttp.post(
+      this.baseUrl + 'users/' + id + '/like/' + recipientId,
+      {}
+    );
   }
 
   getMessages(id: number, page?, itemsPerPage?, messageContainer?: string) {
@@ -116,27 +113,27 @@ export class UserService {
           );
         }
         return paginatedResult;
-      })
-      .catch(this.handleError);
+      });
   }
 
   getMessageThread(id: number, recipientId: number) {
-    return this.authHttp
-      .get(this.baseUrl + 'users/' + id + '/messages/thread/' + recipientId)
-      .catch(this.handleError);
+    return this.authHttp.get<Message[]>(
+      this.baseUrl + 'users/' + id + '/messages/thread/' + recipientId
+    );
   }
 
   sendMessage(id: number, message: Message) {
-    return this.authHttp
-      .post(this.baseUrl + 'users/' + id + '/messages', message)
-      .catch(this.handleError);
+    return this.authHttp.post<Message>(
+      this.baseUrl + 'users/' + id + '/messages',
+      message
+    );
   }
 
   deleteMessage(id: number, userId: number) {
-    return this.authHttp
-      .post(this.baseUrl + 'users/' + userId + '/messages/' + id, {})
-      .map(response => {}) // we don't return a content so we don't map anything
-      .catch(this.handleError);
+    return this.authHttp.post(
+      this.baseUrl + 'users/' + userId + '/messages/' + id,
+      {}
+    );
   }
 
   markAsRead(userId: number, messageId: number) {
@@ -146,25 +143,5 @@ export class UserService {
         {}
       )
       .subscribe(); // self subscribing [we don't need to creat a separate method in it in the compoent]
-  }
-
-  private handleError(error: any) {
-    if (error.status === 400) {
-      return Observable.throw(error._body);
-    }
-    const applicationError = error.headers.get('Application-Error');
-    if (applicationError) {
-      return Observable.throw(applicationError);
-    }
-    const serverError = error.json();
-    let modelStateError = '';
-    if (serverError) {
-      for (const key in serverError) {
-        if (serverError[key]) {
-          modelStateError += serverError[key] + '\n';
-        }
-      }
-    }
-    return Observable.throw(modelStateError || 'Server Error');
   }
 }
