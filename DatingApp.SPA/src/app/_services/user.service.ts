@@ -1,15 +1,12 @@
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
-import { User } from '../_models/User';
-import { PaginatedResult } from '../_models/pagination';
 import { Message } from '../_models/message';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { PaginatedResult } from '../_models/pagination';
+import { User } from '../_models/User';
 
 @Injectable()
 export class UserService {
@@ -45,17 +42,19 @@ export class UserService {
 
     return this.authHttp
       .get<User[]>(this.baseUrl + 'users', { observe: 'response', params }) // we need to access to response to get pagination details
-      .map(response => {
-        paginatedResult.result = response.body;
+      .pipe(
+        map(response => {
+          paginatedResult.result = response.body;
 
-        if (response.headers.get('Pagination') != null) {
-          paginatedResult.pagination = JSON.parse(
-            response.headers.get('Pagination')
-          );
-        }
+          if (response.headers.get('Pagination') != null) {
+            paginatedResult.pagination = JSON.parse(
+              response.headers.get('Pagination')
+            );
+          }
 
-        return paginatedResult; // by this way we will get the users and the pagination with pagination header
-      });
+          return paginatedResult; // by this way we will get the users and the pagination with pagination header
+        })
+      );
   }
 
   getUser(id): Observable<User> {
@@ -104,16 +103,18 @@ export class UserService {
         observe: 'response',
         params
       })
-      .map(response => {
-        paginatedResult.result = response.body;
+      .pipe(
+        map(response => {
+          paginatedResult.result = response.body;
 
-        if (response.headers.get('Pagination') != null) {
-          paginatedResult.pagination = JSON.parse(
-            response.headers.get('Pagination')
-          );
-        }
-        return paginatedResult;
-      });
+          if (response.headers.get('Pagination') != null) {
+            paginatedResult.pagination = JSON.parse(
+              response.headers.get('Pagination')
+            );
+          }
+          return paginatedResult;
+        })
+      );
   }
 
   getMessageThread(id: number, recipientId: number) {

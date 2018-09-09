@@ -4,8 +4,7 @@ import { Message } from '../../_models/message';
 import { AuthService } from '../../_services/auth.service';
 import { UserService } from '../../_services/user.service';
 import { AlertifyService } from '../../_services/alertify.service';
-import { ActivatedRoute } from '@angular/router';
-import 'rxjs/add/operator/do';
+import { tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 @Component({
@@ -33,16 +32,18 @@ export class MemberMessagesComponent implements OnInit {
     const currentUserId = +this.authService.decodedToken.nameid; // we add '+' to convert to a number instead of any
     this.userService
       .getMessageThread(this.authService.decodedToken.nameid, this.userId)
-      .do(messages => {
-        _.each(messages, (message: Message) => {
-          if (
-            message.isRead === false &&
-            message.recipientId === currentUserId
-          ) {
-            this.userService.markAsRead(currentUserId, message.id);
-          }
-        });
-      })
+      .pipe(
+        tap(messages => {
+          _.each(messages, (message: Message) => {
+            if (
+              message.isRead === false &&
+              message.recipientId === currentUserId
+            ) {
+              this.userService.markAsRead(currentUserId, message.id);
+            }
+          });
+        })
+      )
       .subscribe(
         messages => (this.messages = messages),
         error => {

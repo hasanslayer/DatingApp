@@ -7,7 +7,8 @@ import {
   HttpErrorResponse,
   HTTP_INTERCEPTORS
 } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -15,26 +16,26 @@ export class ErrorInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    return next.handle(req).catch(error => {
-      if (error instanceof HttpErrorResponse) {
-        const applicationError = error.headers.get('Application-Error');
-        if (applicationError) {
-          return Observable.throw(applicationError);
-        }
-        const serverError = error.error;
-        let modelStateError = '';
-        if (serverError && typeof serverError === 'object') {
-          for (const key in serverError) {
-            if (serverError[key]) {
-              modelStateError += serverError[key] + '\n';
+    return next.handle(req).pipe(
+      catchError(error => {
+        if (error instanceof HttpErrorResponse) {
+          const applicationError = error.headers.get('Application-Error');
+          if (applicationError) {
+            return throwError(applicationError);
+          }
+          const serverError = error.error;
+          let modelStateError = '';
+          if (serverError && typeof serverError === 'object') {
+            for (const key in serverError) {
+              if (serverError[key]) {
+                modelStateError += serverError[key] + '\n';
+              }
             }
           }
+          return throwError(modelStateError || serverError || 'Server Error');
         }
-        return Observable.throw(
-          modelStateError || serverError || 'Server Error'
-        );
-      }
-    });
+      })
+    );
   }
 }
 

@@ -1,15 +1,12 @@
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/catch';
-
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
-import { User } from '../_models/User';
-import { AlertifyService } from '../_services/alertify.service';
-import { UserService } from '../_services/user.service';
-import { Observable } from 'rxjs/Observable';
 import { Message } from '../_models/message';
+import { AlertifyService } from '../_services/alertify.service';
 import { AuthService } from '../_services/auth.service';
+import { UserService } from '../_services/user.service';
 
 @Injectable()
 export class MessagesResolver implements Resolve<Message[]> {
@@ -32,10 +29,13 @@ export class MessagesResolver implements Resolve<Message[]> {
         this.pageSize,
         this.messageContainer
       )
-      .catch(error => {
-        this.alertify.error('Problem retrieving data');
-        this.router.navigate(['/home']);
-        return Observable.of(null);
-      }); // there is no need to use subscibe because root resolver automatically use it
+      .pipe(
+        catchError(error => {
+          this.alertify.error('Problem retrieving data');
+          this.router.navigate(['/home']);
+          return of(null);
+        })
+      );
+    // there is no need to use subscibe because root resolver automatically use it
   }
 }

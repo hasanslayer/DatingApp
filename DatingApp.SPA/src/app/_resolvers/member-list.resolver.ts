@@ -1,13 +1,11 @@
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/catch';
-
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { User } from '../_models/User';
 import { AlertifyService } from '../_services/alertify.service';
 import { UserService } from '../_services/user.service';
-import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class MemberListResolver implements Resolve<User[]> {
@@ -21,12 +19,13 @@ export class MemberListResolver implements Resolve<User[]> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<User[]> {
-    return this.userService
-      .getUsers(this.pageNumber, this.pageSize)
-      .catch(error => {
+    return this.userService.getUsers(this.pageNumber, this.pageSize).pipe(
+      catchError(error => {
         this.alertify.error('Problem retrieving data');
         this.router.navigate(['/home']);
-        return Observable.of(null);
-      }); // there is no need to use subscibe because root resolver automatically use it
+        return of(null);
+      })
+    );
+    // there is no need to use subscibe because root resolver automatically use it
   }
 }
